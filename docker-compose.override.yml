@@ -6,19 +6,28 @@ services:
     image: redis:latest
     ports:
       - "6379:6379"
+    networks:
+      - beymen_network  
 
    beymengroupcase.servicea:
     container_name: beymen-servicea
     restart: always
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Staging
     ports:
       - "18010:80" 
+    networks:
+      - beymen_network  
    
    beymengroupcase.serviceb:
     container_name: beymen-serviceb
     restart: always
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Staging
     ports:
       - "18020:80" 
+    networks:
+      - beymen_network  
+
+networks:
+  beymen_network:

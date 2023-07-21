@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BeymenGroupCase.Configurati
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{FC1FD9AF-B526-4CFB-B932-5674EDC9768F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeymenGroupCase.ConfigurationApi", "src\Services\BeymenGroupCase.ConfigurationApi\BeymenGroupCase.ConfigurationApi.csproj", "{A9844F50-C210-4BE8-B1D5-FC160E0BF129}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{FC1FD9AF-B526-4CFB-B932-5674EDC9768F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FC1FD9AF-B526-4CFB-B932-5674EDC9768F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FC1FD9AF-B526-4CFB-B932-5674EDC9768F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9844F50-C210-4BE8-B1D5-FC160E0BF129}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9844F50-C210-4BE8-B1D5-FC160E0BF129}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9844F50-C210-4BE8-B1D5-FC160E0BF129}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9844F50-C210-4BE8-B1D5-FC160E0BF129}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -49,5 +55,9 @@ Global
 		{FD772778-B42D-46CF-8F48-4DFB20F71CBE} = {55F7F078-21D0-4CC9-BEAC-F53E9B7A949A}
 		{72C617EC-5195-49F9-93C5-BC149B0CFDEB} = {55F7F078-21D0-4CC9-BEAC-F53E9B7A949A}
 		{36193A9D-63A0-4EAE-957D-CDED687F40CE} = {72C617EC-5195-49F9-93C5-BC149B0CFDEB}
+		{A9844F50-C210-4BE8-B1D5-FC160E0BF129} = {FD772778-B42D-46CF-8F48-4DFB20F71CBE}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5F33B094-A990-4A12-BAD1-C1B7A6F531EC}
 	EndGlobalSection
 EndGlobal

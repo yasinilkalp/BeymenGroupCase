@@ -18,7 +18,7 @@ namespace BeymenGroupCase.Configuration
             ConnectionMultiplexer redisConnection = ConnectionMultiplexer.Connect(_settings.ConnectionString);
             IDatabase db = redisConnection.GetDatabase(db: 1);
 
-            string _key = _settings.ApplicationName + "_" + key;
+            string _key = _settings.ApplicationName + "." + key;
             var response = await db.StringGetAsync(_key);
             if (response.HasValue)
             {
