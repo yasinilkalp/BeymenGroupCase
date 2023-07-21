@@ -6,3 +6,10 @@ services:
     build:
       context: .
       dockerfile: src/Services/BeymenGroupCase.ServiceA/Dockerfile
+
+  beymengroupcase.serviceb:
+    image: ${DOCKER_REGISTRY-}beymengroupcaseserviceb
+    build:
+      context: .
+      dockerfile: src/Services/BeymenGroupCase.ServiceB/Dockerfile
+

@@ -1,15 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using BeymenGroupCase.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
 namespace BeymenGroupCase.ServiceB
@@ -28,6 +22,10 @@ namespace BeymenGroupCase.ServiceB
         {
 
             services.AddControllers();
+
+            string ApplicationName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+            services.AddBeymenConfiguration(Configuration, ApplicationName);
+            
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "BeymenGroupCase.ServiceB", Version = "v1" });

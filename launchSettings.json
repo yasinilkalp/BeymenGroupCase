@@ -4,7 +4,8 @@
       "commandName": "DockerCompose",
       "commandVersion": "1.0",
       "serviceActions": {
-        "beymengroupcase.servicea": "StartDebugging"
+        "beymengroupcase.servicea": "StartDebugging",
+        "beymengroupcase.serviceb": "StartDebugging"
       }
     }
   }
