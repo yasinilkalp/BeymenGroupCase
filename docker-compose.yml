@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  beymengroupcase.servicea:
+    image: ${DOCKER_REGISTRY-}beymengroupcaseservicea
+    build:
+      context: .
+      dockerfile: src/Services/BeymenGroupCase.ServiceA/Dockerfile
