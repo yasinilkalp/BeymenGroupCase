@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using StackExchange.Redis;
+using System.Runtime;
 
 namespace BeymenGroupCase.Configuration
 {
@@ -9,10 +11,13 @@ namespace BeymenGroupCase.Configuration
         {
             string RedisConnectionstring = configuration.GetConnectionString("Redis");
             string RefreshTimerIntervalInMs = configuration.GetSection("RedisRefreshTimerIntervalInMs").Value;
-            services.AddTransient<IConfigurationReader>(provider =>
+            services.AddSingleton<IConfigurationReader>(provider =>
             {
-                return new ConfigurationReader(new(ApplicationName, RedisConnectionstring, int.Parse(RefreshTimerIntervalInMs)));
+                ConnectionMultiplexer redisConnection = ConnectionMultiplexer.Connect(RedisConnectionstring);
+                var db = redisConnection.GetDatabase(db: 1);
+                return new ConfigurationReader(ApplicationName, db);
             });
         }
+
     }
 }

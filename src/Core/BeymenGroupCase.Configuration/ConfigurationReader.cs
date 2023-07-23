@@ -1,5 +1,6 @@
 ﻿using StackExchange.Redis;
 using System;
+using System.Runtime;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -7,28 +8,33 @@ namespace BeymenGroupCase.Configuration
 {
     public class ConfigurationReader : IConfigurationReader
     {
-        private ConfigurationSettings _settings;
-        public ConfigurationReader(ConfigurationSettings settings)
+        private readonly string _applicationName;
+        private readonly IDatabase _db;
+        public ConfigurationReader(string applicationName, IDatabase db)
         {
-            _settings = settings;
+            _applicationName = applicationName;
+            _db = db;
         }
 
         public async Task<T> GetValue<T>(string key)
-        {
-            ConnectionMultiplexer redisConnection = ConnectionMultiplexer.Connect(_settings.ConnectionString);
-            IDatabase db = redisConnection.GetDatabase(db: 1);
-
-            string _key = _settings.ApplicationName + "." + key;
-            var response = await db.StringGetAsync(_key);
+        { 
+            string _key = _applicationName + "." + key;
+            var response = await _db.StringGetAsync(new RedisKey(key));
             if (response.HasValue)
             {
                 var configurationModel = JsonSerializer.Deserialize<ConfigurationModel>(response);
                 if (configurationModel != null && configurationModel.IsActive)
                 {
-                    return (T)Convert.ChangeType(configurationModel.Value, typeof(T));
+                    // Modeldeki Type alanına göre Convert ediyor. 
+                    return (T)Convert.ChangeType(configurationModel.Value, configurationModel.GetType());
+
+                    // GetValue methodu kullanılırken gönderilen T tipine göre convert eder. Ama bu sefer modeldeki Type alanının bi anlamı kalmamış olur. 
+                    // return (T)Convert.ChangeType(configurationModel.Value, typeof(T));
                 }
             }
             return default;
-        } 
+        }
+
+
     }
 }
