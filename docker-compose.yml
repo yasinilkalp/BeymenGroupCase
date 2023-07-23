@@ -12,4 +12,15 @@ services:
     build:
       context: .
       dockerfile: src/Services/BeymenGroupCase.ServiceB/Dockerfile
+       
+  beymengroupcase.configurationapi:
+    image: ${DOCKER_REGISTRY-}beymengroupcaseconfigurationapi
+    build:
+      context: .
+      dockerfile: src/Services/BeymenGroupCase.ConfigurationApi/Dockerfile 
+  
+  beymengroupcase.configurationapp:
+    build:
+      context: /src/Apps/beymen-configuration-app
+      dockerfile: Dockerfile 
 

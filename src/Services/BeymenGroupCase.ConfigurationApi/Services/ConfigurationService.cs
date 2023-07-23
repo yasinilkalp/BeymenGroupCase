@@ -1,4 +1,7 @@
 ﻿using BeymenGroupCase.ConfigurationApi.Models;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
+using StackExchange.Redis;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
@@ -43,9 +46,15 @@ namespace BeymenGroupCase.ConfigurationApi.Services
 
         public async Task<List<ConfigurationModel>> GetAll()
         {
-            var responses = await _redisServer.Database.HashKeysAsync("");
-            responses.ToList();
-            return null;
+            var executeKeys = await _redisServer.Database.ExecuteAsync("KEYS", "*");
+            RedisValue[] keys = (RedisValue[]?)executeKeys;
+
+            List<ConfigurationModel> result = new();
+            foreach (var key in keys)
+            {
+                result.Add(await Get(key));
+            } 
+            return result;
         }
 
         public async Task<bool> Update(ConfigurationModel model)
@@ -54,7 +63,7 @@ namespace BeymenGroupCase.ConfigurationApi.Services
 
             if (await Any(_key)) await Delete(_key);
 
-            return await Add(model);  
+            return await Add(model);
         }
     }
 }

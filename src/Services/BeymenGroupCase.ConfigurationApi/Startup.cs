@@ -27,6 +27,15 @@ namespace BeymenGroupCase.ConfigurationApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", builder =>
+                {
+                    builder.AllowAnyOrigin()
+                           .AllowAnyMethod()
+                           .AllowAnyHeader();
+                });
+            });
 
             services.AddControllers();
 
@@ -42,7 +51,7 @@ namespace BeymenGroupCase.ConfigurationApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
+            if (env.IsDevelopment() || env.IsStaging())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
@@ -50,6 +59,8 @@ namespace BeymenGroupCase.ConfigurationApi
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors("AllowAll");
 
             app.UseRouting();
 
