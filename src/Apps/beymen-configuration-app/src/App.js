@@ -3,21 +3,26 @@ import ConfigurationList from "./components/configuration-list-components";
 import ConfigurationFilter from "./components/configuration-filter-components";
 import ConfigurationModal from "./components/configuration-modal-components";
 import { Add, GetAll, Update } from "./services/ConfigurationService";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   setConfigurationData,
+  setConfigurationDataRefresh,
   setConfigurationDialog,
   setConfigurationMessage,
 } from "./features/configurationSlice";
 import SnackBarComponents from "./components/snackbar-components";
+import Header from "./components/header";
 
 const App = () => {
   const dispatch = useDispatch();
-
+  const configurationDataRefresh = useSelector(
+    (state) => state.configuration.configurationDataRefresh
+  );
   const getConfigurationList = React.useCallback(async () => {
     const response = await GetAll();
     if (response.status === 200) {
       dispatch(setConfigurationData(response.data));
+      dispatch(setConfigurationDataRefresh(false));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -25,6 +30,10 @@ const App = () => {
   React.useEffect(() => {
     getConfigurationList();
   }, [getConfigurationList]);
+
+  React.useEffect(() => {
+    if (configurationDataRefresh) getConfigurationList();
+  }, [getConfigurationList, configurationDataRefresh]);
 
   const onSave = async (record) => {
     if (record.isUpdate) {
@@ -97,7 +106,8 @@ const App = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto mt-12">
+    <div className="max-w-3xl mx-auto mt-12">
+      <Header />
       <ConfigurationFilter />
       <ConfigurationList />
       <ConfigurationModal onSave={onSave} />

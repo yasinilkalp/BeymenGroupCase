@@ -2,6 +2,10 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   configurationData: [],
+  configurationSearch: {
+    keyword: "",
+    filterApplication: "all",
+  },
   configurationDialog: null,
   configurationMessage: null,
   configurationDataRefresh: false,
@@ -22,6 +26,9 @@ const configurationSlice = createSlice({
     setConfigurationMessage: (state, action) => {
       state.configurationMessage = action.payload;
     },
+    setConfigurationSearch: (state, action) => {
+      state.configurationSearch = action.payload;
+    },
   },
 });
 
@@ -30,6 +37,7 @@ export const {
   setConfigurationDialog,
   setConfigurationDataRefresh,
   setConfigurationMessage,
+  setConfigurationSearch,
 } = configurationSlice.actions;
 
 export default configurationSlice.reducer;

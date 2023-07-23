@@ -5,3 +5,12 @@
 body {
   @apply bg-gray-100 text-xs;
 }
+
+.add-button {
+  @apply flex-none w-40;
+  padding: 5px 15px !important;
+  margin: 0 !important;
+  background: #ffffff !important;
+  color: #5c5c5c !important;
+  border: 1px solid #e8e8e8 !important;
+}

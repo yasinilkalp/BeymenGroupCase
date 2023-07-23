@@ -15,7 +15,8 @@ import {
   Select,
   TextField,
 } from "@mui/material";
-import applicationNames from "../../services/ConfigurationService";
+import { types, applicationNames } from "../../services/ConfigurationService";
+import ValueField from "./value-field";
 let initialValues = {
   name: "",
   type: "",
@@ -168,26 +169,35 @@ const ConfigurationModal = (props) => {
               />
             </Grid>
             <Grid item>
-              <TextField
-                size="small"
-                fullWidth
-                label="Type"
-                value={values.type}
-                onChange={(e) => onChange("type", e.target.value)}
-                onBlur={(e) => onBlur("type", e)}
-                error={Boolean(errors.type)}
-              />
+              <FormControl fullWidth size="small">
+                <InputLabel id="type">Type</InputLabel>
+                <Select
+                  id="type"
+                  value={values.type}
+                  size="small"
+                  label="Type"
+                  onBlur={(e) => onBlur("type", e)}
+                  error={Boolean(errors.type)}
+                  onChange={(e) => {
+                    onChange("type", e.target.value);
+                    onChange(
+                      "value",
+                      e.target.value === "Boolean" ? "True" : ""
+                    );
+                  }}
+                >
+                  {types.map((name) => {
+                    return (
+                      <MenuItem key={name} value={name}>
+                        {name}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
             </Grid>
             <Grid item>
-              <TextField
-                size="small"
-                fullWidth
-                label="Value"
-                value={values.value}
-                onChange={(e) => onChange("value", e.target.value)}
-                onBlur={(e) => onBlur("value", e)}
-                error={Boolean(errors.value)}
-              />
+              <ValueField {...{ values, onChange, onBlur, errors }} />
             </Grid>
             <Grid item>
               <FormGroup className="Checkbox">

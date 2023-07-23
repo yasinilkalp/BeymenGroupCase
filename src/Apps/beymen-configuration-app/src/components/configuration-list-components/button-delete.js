@@ -19,14 +19,14 @@ const DeleteButton = (props) => {
           dispatch(setConfigurationDataRefresh(true));
           dispatch(
             setConfigurationMessage({
-              text: "The record has been successfully added.",
+              text: "The record has been successfully removed.",
               severity: "success",
             })
           );
         } else {
           dispatch(
             setConfigurationMessage({
-              text: "The record could not be added.",
+              text: "The record could not be removed.",
               severity: "error",
             })
           );

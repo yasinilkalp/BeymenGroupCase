@@ -11,33 +11,49 @@ const TableBodyComponent = () => {
     (state) => state.configuration.configurationData
   );
 
+  const configurationSearch = useSelector(
+    (state) => state.configuration.configurationSearch
+  );
+
   return (
     <TableBody>
       {configurationData &&
-        configurationData.map((item, index) => {
-          return (
-            <TableRow key={index}>
-              <TableCell>{index + 1}</TableCell>
-              <TableCell>{item.applicationName}</TableCell>
-              <TableCell>{item.name}</TableCell>
-              <TableCell>{item.type}</TableCell>
-              <TableCell>{item.value}</TableCell>
-              <TableCell>
-                {item.isActive ? (
-                  <CheckBoxOutlinedIcon />
-                ) : (
-                  <CheckBoxOutlineBlankIcon />
-                )}
-              </TableCell>
-              <TableCell>
-                <div className="flex">
-                  <EditButton item={item} />
-                  <DeleteButton item={item} />
-                </div>
-              </TableCell>
-            </TableRow>
-          );
-        })}
+        configurationData
+          .filter(
+            (x) =>
+              x.applicationName.includes(
+                configurationSearch.filterApplication === "all"
+                  ? ""
+                  : configurationSearch.filterApplication
+              ) &&
+              x.name
+                .toLowerCase()
+                .includes(configurationSearch.keyword.toLowerCase())
+          )
+          .map((item, index) => {
+            return (
+              <TableRow key={index}>
+                <TableCell>{index + 1}</TableCell>
+                <TableCell>{item.applicationName}</TableCell>
+                <TableCell>{item.name}</TableCell>
+                <TableCell>{item.type}</TableCell>
+                <TableCell>{item.value}</TableCell>
+                <TableCell>
+                  {item.isActive ? (
+                    <CheckBoxOutlinedIcon />
+                  ) : (
+                    <CheckBoxOutlineBlankIcon />
+                  )}
+                </TableCell>
+                <TableCell>
+                  <div className="flex">
+                    <EditButton item={item} />
+                    <DeleteButton item={item} />
+                  </div>
+                </TableCell>
+              </TableRow>
+            );
+          })}
     </TableBody>
   );
 };

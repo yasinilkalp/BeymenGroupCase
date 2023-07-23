@@ -1,7 +1,8 @@
 import axios from "axios";
 
 var applicationNames = ["ServiceA", "ServiceB"];
-export default applicationNames;
+var types = ["String", "Boolean", "Int", "Decimal"];
+export { applicationNames, types };
 
 export function GetAll() {
   return axios.get(process.env.REACT_APP_API_URL + "/api/Configuration/GetAll");
