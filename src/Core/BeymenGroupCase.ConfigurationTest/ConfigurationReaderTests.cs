@@ -1,4 +1,5 @@
 ﻿using BeymenGroupCase.Configuration;
+using Microsoft.Extensions.Caching.Memory;
 using Moq;
 using StackExchange.Redis;
 using System.Text.Json;
@@ -7,8 +8,8 @@ using Xunit;
 
 namespace BeymenGroupCase.ConfigurationTest
 {
-    public class ConfigurationReaderTests  
-    { 
+    public class ConfigurationReaderTests : BaseTest
+    {
 
         // 1. Geçerli bir anahtar için doğru değeri döndürme
         [Fact]
@@ -18,11 +19,8 @@ namespace BeymenGroupCase.ConfigurationTest
             var applicationName = "ServiceA";
             var key = "SiteName";
             var expectedValue = "Beymen.com.tr";
-
-            var mockDatabase = new Mock<IDatabase>();
-            mockDatabase.Setup(d => d.StringGetAsync(key, CommandFlags.None)).ReturnsAsync("{\"Name\":\"SiteName\",\"Type\":\"String\",\"Value\":\"Beymen.com.tr\",\"IsActive\":true,\"ApplicationName\":\"ServiceA\"}");
-
-            var configurationReader = new ConfigurationReader(applicationName, mockDatabase.Object);
+             
+            var configurationReader = new ConfigurationReader(applicationName, mockDatabase.Object, cacheMock.Object);
 
             // Act
             var result = await configurationReader.GetValue<string>(key);
@@ -39,10 +37,10 @@ namespace BeymenGroupCase.ConfigurationTest
             var applicationName = "ServiceA";
             var key = "InvalidKey";
 
-            var mockDatabase = new Mock<IDatabase>();
+            
             mockDatabase.Setup(d => d.StringGetAsync(key, CommandFlags.None)).ReturnsAsync(new RedisValue(null));
 
-            var configurationReader = new ConfigurationReader(applicationName, mockDatabase.Object);
+            var configurationReader = new ConfigurationReader(applicationName, mockDatabase.Object, cacheMock.Object);
 
             // Act
             var result = await configurationReader.GetValue<string>(key);
@@ -58,12 +56,11 @@ namespace BeymenGroupCase.ConfigurationTest
             // Arrange
             var applicationName = "ServiceA";
             var key = "InvalidJsonKey";
-
-            var mockDatabase = new Mock<IDatabase>();
+             
             mockDatabase.Setup(d => d.StringGetAsync(key, CommandFlags.None)).ReturnsAsync("Invalid JSON");
 
-            var configurationReader = new ConfigurationReader(applicationName, mockDatabase.Object);
-              
+            var configurationReader = new ConfigurationReader(applicationName, mockDatabase.Object, cacheMock.Object);
+
             // Act & Assert
             await Assert.ThrowsAsync<JsonException>(async () => await configurationReader.GetValue<string>(key));
         }
@@ -76,12 +73,11 @@ namespace BeymenGroupCase.ConfigurationTest
             var applicationName = "ServiceA";
             var intKey = "IntValue";
             var boolKey = "BoolValue";
-
-            var mockDatabase = new Mock<IDatabase>();
+             
             mockDatabase.Setup(d => d.StringGetAsync(intKey, CommandFlags.None)).ReturnsAsync("{\"Name\":\"IntValue\",\"Type\":\"Int\",\"Value\":\"24\",\"IsActive\":true,\"ApplicationName\":\"ServiceA\"}");
             mockDatabase.Setup(d => d.StringGetAsync(boolKey, CommandFlags.None)).ReturnsAsync("{\"Name\":\"BoolValue\",\"Type\":\"Boolean\",\"Value\":\"True\",\"IsActive\":true,\"ApplicationName\":\"ServiceA\"}");
 
-            var configurationReader = new ConfigurationReader(applicationName, mockDatabase.Object);
+            var configurationReader = new ConfigurationReader(applicationName, mockDatabase.Object, cacheMock.Object);
 
             // Act
             var intValue = await configurationReader.GetValue<int>(intKey);
@@ -103,13 +99,12 @@ namespace BeymenGroupCase.ConfigurationTest
             var keyB = "KeyB";
             var expectedValueA = "Value for ServiceA";
             var expectedValueB = "Value for ServiceB";
-
-            var mockDatabase = new Mock<IDatabase>();
+             
             mockDatabase.Setup(d => d.StringGetAsync(keyA, CommandFlags.None)).ReturnsAsync("{\"Name\":\"KeyA\",\"Type\":\"String\",\"Value\":\"Value for ServiceA\",\"IsActive\":true,\"ApplicationName\":\"ServiceA\"}");
             mockDatabase.Setup(d => d.StringGetAsync(keyB, CommandFlags.None)).ReturnsAsync("{\"Name\":\"KeyB\",\"Type\":\"String\",\"Value\":\"Value for ServiceB\",\"IsActive\":true,\"ApplicationName\":\"ServiceB\"}");
 
-            var configurationReaderA = new ConfigurationReader(applicationNameA, mockDatabase.Object);
-            var configurationReaderB = new ConfigurationReader(applicationNameB, mockDatabase.Object);
+            var configurationReaderA = new ConfigurationReader(applicationNameA, mockDatabase.Object, cacheMock.Object);
+            var configurationReaderB = new ConfigurationReader(applicationNameB, mockDatabase.Object, cacheMock.Object);
 
             // Act
             var resultA = await configurationReaderA.GetValue<string>(keyA);
@@ -120,5 +115,29 @@ namespace BeymenGroupCase.ConfigurationTest
             Assert.Equal(expectedValueB, resultB);
         }
 
+
+        [Fact]
+        public async Task GetValue_ShouldReturnCachedValue_WhenValueExistsInMemoryCache()
+        {
+            // Arrange
+            string applicationName = "ServiceA";
+            string key = "SiteName";
+            string expectedValue = "boyner.com.tr";
+
+            // Redis'e erişimde oluşacak bir hata
+            RedisException redisException = new RedisException("Redis is unavailable.");
+
+            mockDatabase.Setup(d => d.StringGetAsync(key, CommandFlags.None)).ThrowsAsync(redisException);
+
+            // ConfigurationReader nesnesini oluşturma
+            var configurationReader = new ConfigurationReader(applicationName, mockDatabase.Object, cacheMock.Object);
+
+            // Act
+            var result = await configurationReader.GetValue<string>(key);
+
+            // Assert
+            // Cache'de varolan değerin döndüğünü doğrulama
+            Assert.Equal(expectedValue, result);
+        } 
     }
 }

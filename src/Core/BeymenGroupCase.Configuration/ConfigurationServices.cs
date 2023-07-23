@@ -1,7 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
-using System.Runtime;
 
 namespace BeymenGroupCase.Configuration
 {
@@ -11,11 +11,16 @@ namespace BeymenGroupCase.Configuration
         {
             string RedisConnectionstring = configuration.GetConnectionString("Redis");
             string RefreshTimerIntervalInMs = configuration.GetSection("RedisRefreshTimerIntervalInMs").Value;
+
+            ConnectionMultiplexer redisConnection = ConnectionMultiplexer.Connect(RedisConnectionstring);
+            var db = redisConnection.GetDatabase(db: 1);
+
+            services.AddMemoryCache();
+
             services.AddSingleton<IConfigurationReader>(provider =>
             {
-                ConnectionMultiplexer redisConnection = ConnectionMultiplexer.Connect(RedisConnectionstring);
-                var db = redisConnection.GetDatabase(db: 1);
-                return new ConfigurationReader(ApplicationName, db);
+                var cache = provider.GetRequiredService<IMemoryCache>();
+                return new ConfigurationReader(ApplicationName, db, cache);
             });
         }
 
